@@ -16,16 +16,13 @@ type Props = {
   children: React.ReactNode;
 };
 
-const RootLayout: React.FC<Props> = (props) => {
-  const { children } = props;
+export default function RootLayout({ children }: Props) {
   return (
     <html lang="ja">
       <body>
         <Header />
-        <div className="mx-4 mt-2 max-w-2xl md:mx-auto">{children}</div>
+        <main className="mx-auto max-w-4xl px-4 py-8">{children}</main>
       </body>
     </html>
   );
-};
-
-export default RootLayout;
+}
