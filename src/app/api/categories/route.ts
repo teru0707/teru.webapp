@@ -4,8 +4,8 @@ import { NextResponse, NextRequest } from "next/server";
 // [GET] /api/categories カテゴリ一覧の取得
 export const GET = async (req: NextRequest) => {
   try {
-    const categories = prisma.category.findMany({
-      // ◀ 意図的にawait忘れ
+    // await を追加して、処理が完了するのを待つようにします
+    const categories = await prisma.category.findMany({
       orderBy: {
         createdAt: "desc",
       },

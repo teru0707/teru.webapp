@@ -1,10 +1,17 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
-import { Post } from "@/generated/prisma/client";
 
 export const GET = async (req: NextRequest) => {
   try {
-    const posts: Post[] = await prisma.post.findMany({
+    const posts = await prisma.post.findMany({
+      // ここに include を追加してカテゴリ情報を取得する
+      include: {
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },
