@@ -55,6 +55,8 @@ const Page: React.FC = () => {
     return <div>{fetchError}</div>;
   }
 
+  console.log("ほげほげCurrent posts state:", posts);
+
   if (!posts) {
     return (
       <div className="text-gray-500">
