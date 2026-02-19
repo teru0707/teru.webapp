@@ -28,3 +28,7 @@ model PostCategory {
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
+
+datasource db {
+  provider = "postgresql" // "sqlite" から変更
+}
