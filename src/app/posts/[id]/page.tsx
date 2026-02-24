@@ -3,8 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import dayjs from "dayjs";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock } from "@fortawesome/free-solid-svg-icons";
 
 import FloatingWidgets from "@/app/_components/FloatingWidgets";
 
@@ -15,6 +13,7 @@ export default async function Page({
 }) {
   const { id } = await params;
 
+  // 1. 記事データを取得
   const post = await prisma.post.findUnique({
     where: { id },
     include: {
@@ -26,9 +25,11 @@ export default async function Page({
     notFound();
   }
 
+  // 2. 自動で読了時間を計算
   const plainTextLength = post.content.replace(/<[^>]*>?/gm, "").length;
   const readTime = Math.max(1, Math.ceil(plainTextLength / 500));
 
+  // 3. 関連記事を取得
   const categoryIds = post.categories.map((c) => c.categoryId);
   const relatedPosts = await prisma.post.findMany({
     where: {
@@ -42,6 +43,7 @@ export default async function Page({
 
   return (
     <main className="mx-auto max-w-3xl">
+      {/* 便利ウィジェット（プログレスバー等） */}
       <FloatingWidgets />
 
       <div className="mb-8 space-y-4">
@@ -51,7 +53,21 @@ export default async function Page({
           <time>{dayjs(post.createdAt).format("YYYY.MM.DD")}</time>
 
           <div className="flex items-center gap-1.5 rounded-full bg-indigo-50 px-3 py-1 text-indigo-600 ring-1 ring-indigo-100">
-            <FontAwesomeIcon icon={faClock} />
+            {/* 🌟 軽量なSVGアイコンを使用 */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="h-4 w-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
             <span>約 {readTime} 分で読めます</span>
           </div>
 
