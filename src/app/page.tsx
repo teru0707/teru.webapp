@@ -1,89 +1,55 @@
-"use client";
-import { useState, useEffect } from "react";
-import type { Post } from "@/app/_types/Post";
-import type { PostApiResponse } from "@/app/_types/PostApiResponse";
+// src/app/page.tsx (Server Component)
+import { prisma } from "@/lib/prisma";
 import PostSummary from "@/app/_components/PostSummary";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import { BlogUtils } from "@/lib/BlogUtils";
 
-const Page: React.FC = () => {
-  const [posts, setPosts] = useState<Post[] | null>(null);
-  const [fetchError, setFetchError] = useState<string | null>(null);
+// ISR: 60秒ごとにページを再生成（キャッシュ戦略）
+export const revalidate = 60;
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        // microCMS から記事データを取得
-        const requestUrl = `/api/posts`;
-        const response = await fetch(requestUrl, {
-          method: "GET",
-          cache: "no-store",
-        });
-        if (!response.ok) {
-          throw new Error("データの取得に失敗しました");
-        }
-        const postResponse: PostApiResponse[] = await response.json();
-        console.log("Fetched posts:", postResponse);
-        setPosts(
-          postResponse.map((rawPost) => ({
-            id: rawPost.id,
-            title: rawPost.title,
-            content: rawPost.content,
-            coverImage: {
-              url: rawPost.coverImageURL,
-              width: 1000,
-              height: 1000,
-            },
-            createdAt: rawPost.createdAt,
-            categories: rawPost.categories.map((category) => ({
-              id: category.category.id,
-              name: category.category.name,
-            })),
-          })),
-        );
-      } catch (e) {
-        setFetchError(
-          e instanceof Error ? e.message : "予期せぬエラーが発生しました",
-        );
-      }
-    };
-    fetchPosts();
-  }, []);
+export default async function Page() {
+  // サーバー側で直接データベースから取得（超高速）
+  const posts = await prisma.post.findMany({
+    include: {
+      categories: { include: { category: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
 
-  if (fetchError) {
-    return <div>{fetchError}</div>;
-  }
-
-  console.log("ほげほげCurrent posts state:", posts);
-
-  if (!posts) {
-    return (
-      <div className="text-gray-500">
-        <FontAwesomeIcon icon={faSpinner} className="mr-1 animate-spin" />
-        Loading...
-      </div>
-    );
-  }
+  // BlogUtils で読了時間を付与
+  const processedPosts = BlogUtils.processPosts(
+    posts.map((p) => ({
+      id: p.id,
+      title: p.title,
+      content: p.content,
+      createdAt: p.createdAt.toISOString(),
+      coverImage: { url: p.coverImageURL, width: 1000, height: 1000 },
+      categories: p.categories.map((c) => ({
+        id: c.category.id,
+        name: c.category.name,
+      })),
+    })),
+  );
 
   return (
-    console.log("Rendering posts:", posts),
-    (
-      <main>
-        <div className="text-2xl font-bold">投稿記事一覧</div>
-        <div className="mb-1 flex justify-end">
-          <Link href="/admin/posts" className="text-blue-500 underline">
-            管理者機能
-          </Link>
-        </div>
-        <div className="space-y-3">
-          {posts.map((post) => (
-            <PostSummary key={post.id} post={post} />
-          ))}
-        </div>
-      </main>
-    )
-  );
-};
+    <main className="space-y-8 py-10">
+      <div className="flex items-center justify-between">
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
+          Latest Posts
+        </h1>
+        <Link
+          href="/admin/posts"
+          className="rounded-full bg-slate-900 px-5 py-2 text-sm font-semibold text-white transition-all hover:scale-105 hover:bg-slate-800"
+        >
+          管理者機能 🔑
+        </Link>
+      </div>
 
-export default Page;
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {processedPosts.map((post) => (
+          <PostSummary key={post.id} post={post} />
+        ))}
+      </div>
+    </main>
+  );
+}

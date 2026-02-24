@@ -13,16 +13,20 @@
     "@fortawesome/fontawesome-svg-core": "^7.1.0",
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.0",
+    "@hookform/resolvers": "^5.2.2",
     "@prisma/adapter-better-sqlite3": "^7.3.0",
     "@prisma/adapter-pg": "^7.4.1",
     "@prisma/client": "^7.3.0",
     "dayjs": "^1.11.19",
+    "framer-motion": "^12.34.3",
     "isomorphic-dompurify": "^2.31.0",
     "next": "^15.5.7",
     "pg": "^8.18.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-hot-toast": "^2.6.0"
+    "react-hook-form": "^7.71.2",
+    "react-hot-toast": "^2.6.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -1,61 +1,67 @@
-/* src/app/_components/PostSummary.tsx */
+// src/app/_components/PostSummary.tsx
 "use client";
 import type { Post } from "@/app/_types/Post";
 import dayjs from "dayjs";
-import { twMerge } from "tailwind-merge";
-import DOMPurify from "isomorphic-dompurify";
 import Link from "next/link";
-import { BlogUtils } from "@/lib/BlogUtils"; // 追加
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 type Props = {
   post: Post;
 };
 
-const PostSummary: React.FC<Props> = (props) => {
-  const { post } = props;
-  const dtFmt = "YYYY年MM月DD日";
-  const readingTime = BlogUtils.calculateReadingTime(post.content);
-
-  const safeHTML = DOMPurify.sanitize(post.content, {
-    ALLOWED_TAGS: ["b", "strong", "i", "em", "u", "br"],
-  });
+const PostSummary: React.FC<Props> = ({ post }) => {
+  const dtFmt = "YYYY.MM.DD";
 
   return (
-    <div className="glass-card group mb-4 p-5">
-      <Link href={`/posts/${post.id}`}>
-        <div className="mb-3 flex items-center justify-between text-sm text-slate-500">
-          <div className="flex items-center gap-2">
-            <span>{dayjs(post.createdAt).format(dtFmt)}</span>
-            <span className="rounded-full bg-indigo-100 px-2 py-0.5 font-medium text-indigo-600">
-              ⏱ {readingTime} 分で読めます
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      whileHover={{ y: -5 }}
+      className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 transition-all hover:shadow-xl"
+    >
+      <Link href={`/posts/${post.id}`} className="flex h-full flex-col">
+        {/* サムネイル画像（アスペクト比固定で美しく） */}
+        <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
+          <Image
+            src={post.coverImage.url}
+            alt={post.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+
+        <div className="flex flex-1 flex-col p-5">
+          {/* メタ情報 */}
+          <div className="mb-3 flex items-center justify-between text-xs font-medium text-slate-500">
+            <time dateTime={post.createdAt}>
+              {dayjs(post.createdAt).format(dtFmt)}
+            </time>
+            <span className="flex items-center gap-1 rounded-full bg-indigo-50 px-2.5 py-0.5 text-indigo-600">
+              ⏱ {post.readingTime} min read
             </span>
           </div>
-          <div className="flex space-x-1.5">
+
+          {/* タイトル */}
+          <h2 className="mb-3 line-clamp-2 text-xl leading-snug font-bold text-slate-900 group-hover:text-indigo-600">
+            {post.title}
+          </h2>
+
+          {/* カテゴリタグ（下部に押し付け） */}
+          <div className="mt-auto flex flex-wrap gap-2 pt-4">
             {post.categories.map((category) => (
               <span
                 key={category.id}
-                className="rounded border border-indigo-200 px-2 py-0.5 text-xs text-indigo-500"
+                className="rounded-md bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600 transition-colors group-hover:bg-indigo-100 group-hover:text-indigo-700"
               >
-                #{category.name}
+                {category.name}
               </span>
             ))}
           </div>
         </div>
-        <h2 className="mb-2 text-xl font-bold transition-colors group-hover:text-indigo-600">
-          {post.title}
-        </h2>
-        <div
-          className="line-clamp-2 text-sm leading-relaxed text-slate-600"
-          dangerouslySetInnerHTML={{ __html: safeHTML }}
-        />
-        <div className="mt-4 inline-flex items-center text-sm font-bold text-indigo-500">
-          記事を読む{" "}
-          <span className="ml-1 transition-transform group-hover:translate-x-1">
-            →
-          </span>
-        </div>
       </Link>
-    </div>
+    </motion.div>
   );
 };
 
