@@ -1,0 +1,20 @@
+name: Keep Supabase Alive
+
+# いつ実行するか（トリガー）の設定
+on:
+  schedule:
+    # 毎日 日本時間の午前9時（UTCの深夜0時）に実行
+    - cron: "0 0 * * *"
+  workflow_dispatch: # 手動で実行できるボタンも有効化しておく
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase API
+        # Supabaseのテーブルからデータを1件だけ取得して通信を発生させる
+        run: |
+          curl "${{ secrets.SUPABASE_URL }}/rest/v1/post?select=*" \
+          -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Range: 0-0"
