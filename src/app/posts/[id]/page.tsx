@@ -1,9 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import Image from "next/image"; // 🌟 Next.jsのImageコンポーネントを使用
 import Link from "next/link";
 import dayjs from "dayjs";
-import DOMPurify from "isomorphic-dompurify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 
@@ -41,22 +40,6 @@ export default async function Page({
     orderBy: { createdAt: "desc" },
   });
 
-  const safeHTML = DOMPurify.sanitize(post.content, {
-    ALLOWED_TAGS: [
-      "b",
-      "strong",
-      "i",
-      "em",
-      "u",
-      "br",
-      "h1",
-      "h2",
-      "h3",
-      "p",
-      "a",
-    ],
-  });
-
   return (
     <main className="mx-auto max-w-3xl">
       <FloatingWidgets />
@@ -86,18 +69,16 @@ export default async function Page({
       </div>
 
       <div className="relative mb-10 aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 shadow-xl ring-1 ring-slate-200/50">
-        <Image
+        <img
           src={post.coverImageURL}
           alt={post.title}
-          fill
-          className="object-cover"
-          priority
+          className="h-full w-full object-cover"
         />
       </div>
 
       <div
         className="space-y-6 rounded-2xl bg-white/60 p-8 text-lg leading-relaxed text-slate-800 shadow-sm ring-1 ring-slate-200/50 backdrop-blur-md"
-        dangerouslySetInnerHTML={{ __html: safeHTML }}
+        dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
       {relatedPosts.length > 0 && (
@@ -114,13 +95,10 @@ export default async function Page({
               >
                 <div className="overflow-hidden rounded-xl border border-slate-200 bg-white/80 backdrop-blur-md transition-all hover:-translate-y-1 hover:shadow-lg">
                   <div className="relative aspect-video w-full overflow-hidden bg-slate-100">
-                    {/* 🌟 警告解消！ <img> を <Image> に変更し、fill と unoptimized を追加 */}
-                    <Image
+                    <img
                       src={`/api/og?title=${encodeURIComponent(related.title)}`}
                       alt={related.title}
-                      fill
-                      unoptimized
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </div>
                   <div className="p-4">

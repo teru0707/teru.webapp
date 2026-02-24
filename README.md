@@ -1,5 +1,9 @@
 # Next.js Modern Blog 🚀
 
+開発期間: 2026.01.22 ~ 2026.02.24 (約32時間)
+
+アプリをホストしている Vercel の URL:https://teru-webapp-4buh-mi05spa24-teru0707s-projects.vercel.app/
+
 最新のWeb技術（Next.js 15 App Router, Prisma, Tailwind CSS v4, Framer Motion）をフル活用して構築された、プロ品質のフルスタックブログアプリケーションです。
 一流のSaaSアプリを彷彿とさせる洗練されたUI/UXと、React Server Components (RSC) による圧倒的な表示速度を両立しています。
 
@@ -119,6 +123,3 @@ npm run dev
 🚀 デプロイについて (Deployment)
 このアプリケーションは Vercel へのデプロイに最適化されています。
 Edge Runtimeを活用した動的OGP生成（next/og）や、Server Componentsの恩恵を最大限に受けるため、本番環境の構築には Vercel × 外部PostgreSQL（Supabaseなど）の組み合わせを推奨します。
-
-Next Step
-この素晴らしいアプリを世界中に公開するために、VercelとSupabaseを使ったデプロイの手順に進みましょうか？
