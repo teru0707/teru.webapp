@@ -8,6 +8,7 @@ model Post {
   title          String
   content        String
   coverImageURL  String
+  published      Boolean        @default(false) // 🌟 これを追加（デフォルトは下書き）
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   categories     PostCategory[]

@@ -1,14 +1,36 @@
-/* src/app/globals.css */
 @import "tailwindcss";
 
-@layer base {
-  body {
-    @apply min-h-screen bg-slate-50 text-slate-800;
+/* @layer を外して、HTMLのbodyに直接強制的に適用させます！ */
+body {
+  /* ベースのスタイル */
+  min-height: 100vh;
+  color: #1e293b; /* text-slate-800 */
+  -webkit-font-smoothing: antialiased;
+
+  /* 🌟 Apple風 動くメッシュグラデーション */
+  background-color: #fdfbfb;
+  background-image:
+    radial-gradient(at 10% 20%, hsla(250, 100%, 85%, 0.8) 0px, transparent 50%),
+    radial-gradient(at 80% 10%, hsla(190, 100%, 80%, 0.8) 0px, transparent 50%),
+    radial-gradient(at 20% 80%, hsla(320, 100%, 85%, 0.8) 0px, transparent 50%),
+    radial-gradient(at 90% 90%, hsla(280, 100%, 80%, 0.8) 0px, transparent 50%);
+  background-attachment: fixed; /* スクロールしても背景を固定 */
+  background-size: 150% 150%;
+  animation: mesh-movement 15s ease-in-out infinite alternate;
+}
+
+/* 背景をフワフワ動かすアニメーション */
+@keyframes mesh-movement {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply rounded-lg border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md;
+    @apply rounded-xl border border-white/60 bg-white/40 p-6 shadow-sm backdrop-blur-xl transition-all hover:shadow-lg;
   }
 }
