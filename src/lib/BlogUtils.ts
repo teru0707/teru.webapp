@@ -2,6 +2,8 @@
 /**
  * Javaのユーティリティクラスを模した構成
  */
+import type { Post } from "../app/_types/Post";
+
 export class BlogUtils {
   private static WORDS_PER_MINUTE = 500; // 日本語の平均読書速度
 
@@ -18,7 +20,7 @@ export class BlogUtils {
   /**
    * 投稿リストをJava Stream API風にフィルタリング・加工する例
    */
-  public static processPosts(rawPosts: any[]): any[] {
+  public static processPosts(rawPosts: Post[]): Post[] {
     // Javaのstream().map().collect()に近い処理
     return rawPosts.map((post) => ({
       ...post,
